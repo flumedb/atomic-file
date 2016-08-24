@@ -1,0 +1,6 @@
+# atomic-file
+
+
+## License
+
+MIT
