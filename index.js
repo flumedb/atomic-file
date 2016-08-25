@@ -1,4 +1,5 @@
 var fs = require('fs')
+var createMutex = require('read-write-lock')
 
 var codec = {
   encode: function (obj) {
@@ -10,8 +11,8 @@ var codec = {
 }
 
 module.exports = function (filename, suffix) {
+  var locker = createMutex()
   suffix = suffix || '~'
-  var queue = []
   var value
   return {
     get: function (cb) {
@@ -23,24 +24,14 @@ module.exports = function (filename, suffix) {
     },
     //only allow one update at a time.
     set: function put (_value, cb) {
-      if(queue.length) {
-        return queue.push(function retry () {
-          put(_value, cb)
-        })
-      }
-      queue.push(cb)
-
-      function done (err) {
-        var _queue = queue
-        queue = []
-        while(_queue.length) _queue.shift()(err)
-      }
-
-      fs.writeFile(filename+suffix, codec.encode(_value), function (err) {
-        if(err) return done(err)
-        fs.rename(filename+suffix, filename, function (err) {
-          if(err) done(err)
-          else done(null, value = _value)
+      locker.writeLock(function(unlock) {
+        fs.writeFile(filename+suffix, codec.encode(_value), function (err) {
+          if(err) return unlock(), cb(err)
+          fs.rename(filename+suffix, filename, function (err) {
+            unlock()
+            if(err) cb(err)
+            else cb(null, value = _value)
+          })
         })
       })
     }
