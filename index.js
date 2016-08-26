@@ -26,11 +26,10 @@ module.exports = function (filename, suffix) {
     set: function put (_value, cb) {
       lock(function(unlock) {
         fs.writeFile(filename+suffix, codec.encode(_value), function (err) {
-          if(err) return unlock(), cb(err)
+          if(err) return unlock(cb, err)
           fs.rename(filename+suffix, filename, function (err) {
-            unlock()
-            if(err) cb(err)
-            else cb(null, value = _value)
+            if (!err) value = _value
+            unlock(cb, err, _value)
           })
         })
       })
