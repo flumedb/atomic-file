@@ -1,15 +1,16 @@
 var fs = require('fs')
 
-var codec = {
+var default_codec = {
   encode: function (obj) {
-    return JSON.stringify(obj)
+    return JSON.stringify(obj, null, 2)
   },
   decode: function (b) {
     return JSON.parse(b.toString())
   }
 }
 
-module.exports = function (filename, suffix) {
+module.exports = function (filename, suffix, _codec) {
+  var codec = _codec || default_codec
   suffix = suffix || '~'
   var queue = []
   var value
@@ -18,7 +19,7 @@ module.exports = function (filename, suffix) {
       if(value) return cb(null, value)
       else fs.readFile(filename, 'utf8', function (err, _value) {
         if(err) return cb(err)
-        cb(null, value = JSON.parse(_value))
+        cb(null, value = codec.decode(_value))
       })
     },
     //only allow one update at a time.
