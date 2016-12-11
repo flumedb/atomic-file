@@ -1,16 +1,11 @@
 var fs = require('fs')
 
-var default_codec = {
-  encode: function (obj) {
-    return JSON.stringify(obj, null, 2)
-  },
-  decode: function (b) {
-    return JSON.parse(b.toString())
-  }
+function isFunction (f) {
+  return 'function' === typeof f
 }
 
 module.exports = function (filename, suffix, _codec) {
-  var codec = _codec || default_codec
+  var codec = _codec || require('./codec')
   suffix = suffix || '~'
   var queue = []
   var value
@@ -24,6 +19,7 @@ module.exports = function (filename, suffix, _codec) {
     },
     //only allow one update at a time.
     set: function put (_value, cb) {
+      if(!isFunction(cb)) throw new Error('cb must be function')
       if(queue.length) {
         return queue.push(function retry () {
           put(_value, cb)
@@ -47,3 +43,4 @@ module.exports = function (filename, suffix, _codec) {
     }
   }
 }
+
