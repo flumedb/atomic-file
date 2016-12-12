@@ -14,7 +14,12 @@ module.exports = function (filename, suffix, _codec) {
       if(value) return cb(null, value)
       else fs.readFile(filename, 'utf8', function (err, _value) {
         if(err) return cb(err)
-        cb(null, value = codec.decode(_value))
+        try {
+          value = codec.decode(_value)
+        } catch (err) {
+          return cb(err)
+        }
+        cb(null, value)
       })
     },
     //only allow one update at a time.
@@ -43,4 +48,5 @@ module.exports = function (filename, suffix, _codec) {
     }
   }
 }
+
 
