@@ -35,6 +35,26 @@ tape('test written', function (t) {
   })
 })
 
+tape('destroy', function (t) {
+  atomic.destroy(function (err) {
+    if(err) throw err
+    atomic.get(function (err, value) {
+      t.notOk(value)
+      t.end()
+    })
+  })
+})
+
+tape('test destroyed', function (t) {
+  var atomic3 = Atomic(filename, '~')
+  atomic3.get(function (err, value) {
+    t.ok(err)
+    t.end()
+  })
+})
+
+
+
 tape('single write', function (t) {
 
   var called = 0
@@ -63,3 +83,10 @@ tape('single write', function (t) {
     })
   })
 })
+
+
+
+
+
+
+
