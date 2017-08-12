@@ -36,7 +36,7 @@ module.exports = function (filename, suffix, _codec) {
   return {
     get: function (cb) {
       if(value) return cb(null, value)
-      else fs.readFile(filename, 'utf8', function (err, _value) {
+      else fs.readFile(filename, codec.buffer ? null : 'utf8', function (err, _value) {
         if(err) return cb(err)
         try {
           value = codec.decode(_value)
@@ -65,11 +65,4 @@ module.exports = function (filename, suffix, _codec) {
     }, queue)
   }
 }
-
-
-
-
-
-
-
 
