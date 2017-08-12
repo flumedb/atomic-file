@@ -1,3 +1,4 @@
+'use strict'
 var fs = require('fs')
 
 function isFunction (f) {
@@ -51,7 +52,7 @@ module.exports = function (filename, suffix, _codec) {
       fs.writeFile(filename+suffix, codec.encode(_value), function (err) {
         if(err) return done(err)
         fs.rename(filename+suffix, filename, function (err) {
-          if(err) done(err)
+          if(err) cb(err)
           else cb(null, value = _value)
         })
       })
