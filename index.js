@@ -48,7 +48,6 @@ module.exports = function (filename, suffix, _codec) {
     },
     //only allow one update at a time.
     set: onceAtATime(function put (_value, cb) {
-      console.log(_value, cb)
       fs.writeFile(filename+suffix, codec.encode(_value), function (err) {
         if(err) return done(err)
         fs.rename(filename+suffix, filename, function (err) {
