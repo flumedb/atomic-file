@@ -1,5 +1,5 @@
 module.exports = function (file, suffix, _codec) {
-  var codec = _codec || require('./codec')
+  var codec = _codec || require('./codec/json')
   return {
     set: function (v, cb) {
       console.log('set', file, v)
