@@ -1,20 +1,25 @@
 {
   "name": "atomic-file",
   "description": "",
-  "version": "0.0.1",
+  "version": "2.0.1",
   "homepage": "https://github.com/dominictarr/atomic-file",
   "repository": {
     "type": "git",
     "url": "git://github.com/dominictarr/atomic-file.git"
   },
   "dependencies": {
-    "mutexify": "^1.1.0"
+    "flumecodec": "0.0.1",
+    "idb-kv-store": "^4.4.0",
+    "mutexify": "^1.2.0"
   },
   "devDependencies": {
-    "tape": "^4.6.0"
+    "tape": "^4.10.1"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "browser": {
+    "./index.js": "./browser.js"
   },
   "author": "'Dominic Tarr' <dominic.tarr@gmail.com> (dominictarr.com)",
   "license": "MIT"

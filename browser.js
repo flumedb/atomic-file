@@ -1,4 +1,4 @@
-const Store = require('./store/fs')
+const Store = require('./store/idb')
 const Inject = require('./inject')
 
 module.exports = function (filename, suffix, codec) {
