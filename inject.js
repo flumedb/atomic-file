@@ -1,5 +1,6 @@
 'use strict'
 var fs = require('fs')
+var mutexify = require('mutexify')
 
 function isFunction (f) {
   return 'function' === typeof f
@@ -30,7 +31,7 @@ function onceAtATime (fn, queue) {
 
 module.exports = function (store, _codec) {
   var codec = _codec || require('flumecodec/json')
-  var queue = []
+  var lock = mutexify()
   var value
 
   return {
@@ -47,17 +48,22 @@ module.exports = function (store, _codec) {
       })
     },
     //only allow one update at a time.
-    set: onceAtATime(function put (_value, cb) {
-      store.set(codec.encode(_value), function (err) {
-        if(err) return cb(err)
-        else cb(null, value=_value)
+    set: function (_value, cb) {
+      lock(function (unlock) {
+        store.set(codec.encode(_value), function (err) {
+          if(!err) value=_value
+          unlock(cb, err, _value)
+        })
       })
-    }, queue),
-    destroy: onceAtATime(function destroy (cb) {
-      store.destroy(function (err) {
-        cb(err, value=null)
+    },
+    destroy: function (cb) {
+      lock(function (unlock) {
+        store.destroy(function (err) {
+          value=null
+          unlock(cb, err)
+        })
       })
-    }, queue)
+    }
   }
 }
 
