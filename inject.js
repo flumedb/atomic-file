@@ -1,33 +1,5 @@
 'use strict'
-var fs = require('fs')
 var mutexify = require('mutexify')
-
-function isFunction (f) {
-  return 'function' === typeof f
-}
-
-function onceAtATime (fn, queue) {
-  queue = queue || []
-  return function () {
-    var args = [].slice.call(arguments)
-    if(queue.length)
-      return queue.push(function () {
-        fn.apply(null, args)
-      })
-    //should be a the callback...
-    var cb = args.pop()
-    if(!isFunction(cb)) throw new Error('cb must be provided')
-    queue.push(cb)
-    args.push(function done (err) {
-      var _queue = queue
-      queue = []
-      while(_queue.length) _queue.shift()(err)
-    })
-
-    fn.apply(null, args)
-  }
-}
-
 
 module.exports = function (store, _codec) {
   var codec = _codec || require('flumecodec/json')
