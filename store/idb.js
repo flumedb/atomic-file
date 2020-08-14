@@ -4,8 +4,7 @@ module.exports = function (file, suffix, isBuffer) {
   const parts = file.split('/')
   const key = parts.pop()
   const storename = parts.join('/')
-  const store = new IdbKvStore(storename)
-  var value
+  const store = new IdbKvStore(storename, { disableBroadcast: true })
   return {
     set: function (value, cb) {
       store.set(key, isBuffer ? value.toString('base64') : value , cb)
