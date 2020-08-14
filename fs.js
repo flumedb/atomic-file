@@ -1,4 +1,4 @@
-
+var fs = require('fs')
 module.exports = function (file) {
   return {
     get: function (cb) {
