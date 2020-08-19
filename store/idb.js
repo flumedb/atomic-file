@@ -17,7 +17,7 @@ module.exports = function (file, suffix, isBuffer) {
       })
     },
     destroy: function (cb) {
-      store.clear(cb)
+      store.remove(key, cb)
     }
   }
 }
